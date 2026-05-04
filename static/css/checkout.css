@@ -1,0 +1,71 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #fff7f0;
+    padding: 20px;
+}
+
+.checkout-container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #ff6700;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th, table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+table th {
+    background: #ffe0cc;
+}
+
+.form-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff3e6;
+    border-radius: 10px;
+}
+
+.form-section label {
+    font-weight: bold;
+}
+
+.form-section input,
+.form-section textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ff9a5c;
+}
+
+.btn-place {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    background: #ff6a00;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-place:hover {
+    background: #e65c00;
+}

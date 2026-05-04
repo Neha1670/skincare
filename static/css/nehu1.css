@@ -1,0 +1,120 @@
+/* Reset and body */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+body {
+  background: white;
+}
+
+
+
+
+
+/* Footer & login styles ... (copy the rest exactly as you have) */
+/* 🔹 Footer Styles (Add to nehu.css) */
+.brown-footer {
+    background-color: Black; /* Dark brown */
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 40px 20px 20px 20px;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+.footer-section a {
+    color: #fff;           /* white color, ya jo footer background ke saath match kare */
+    text-decoration: none; /* underline hata dega */
+}
+
+.footer-section a:hover {
+    color: #ffd700;        /* optional hover color */
+    text-decoration: underline; /* hover me underline chahiye to */
+}
+
+
+.footer-section {
+    flex: 1 1 200px;
+    margin-bottom: 20px;
+}
+
+.footer-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ffcc80;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.footer-section p, .footer-section ul, .footer-section form {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 6px;
+}
+
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-section .social-icons a {
+    margin-right: 8px;
+    color: #fff;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.footer-section .social-icons a:hover {
+    color: #ffcc80;
+}
+
+.footer-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-section input[type="email"] {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: 4px;
+}
+
+.footer-section button {
+    padding: 8px;
+    background-color: #ffcc80;
+    color: #3e2723;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.footer-section button:hover {
+    background-color: #ffb74d;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 15px 0 0 0;
+    border-top: 1px solid #fff3e0;
+    font-size: 13px;
+}
+
+
+
+
+
