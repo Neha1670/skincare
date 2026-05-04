@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Edit Marquee</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nehu.css') }}">
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #fffaf5; }
+    h2 { color: #ff6600; margin-bottom: 20px; }
+    label { font-weight: bold; }
+    textarea { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+    button { padding: 8px 15px; background-color: #00c77f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #009f60; }
+    a { display: inline-block; margin-top: 15px; color: #ff6600; text-decoration: none; font-weight: bold; }
+    a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h2>Edit Marquee</h2>
+
+<form method="POST">
+    <label>Marquee Text:</label><br>
+    <textarea name="text" rows="3">{{ current_text }}</textarea><br><br>
+    <button type="submit">Update</button>
+</form>
+
+<a href="{{ url_for('admin_dashboard') }}">← Back to Dashboard</a>
+
+</body>
+</html>

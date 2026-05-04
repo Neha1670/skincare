@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{{ product.name }} - The Pumpskin</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_detail.css') }}"/>
+
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<section id="product-detail">
+  <!-- IMAGES -->
+  <div class="product-images">
+    <img src="{{ url_for('static', filename='images/' + product.image) }}" class="main-img" id="mainImg" alt="{{ product.name }}">
+    {% if product.images %}
+    <div class="thumbs">
+      {% for img in product.images %}
+      <img src="{{ url_for('static', filename='images/' + img) }}" class="thumb" alt="{{ product.name }}">
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- DETAILS -->
+  <div class="product-info">
+    <h2>{{ product.name }}</h2>
+    <p class="price">{{ product.price }}</p>
+    <p class="short-desc">{{ product.short_desc or "High-quality skincare product." }}</p>
+    <p class="long-desc">{{ product.long_desc or "Crafted with natural ingredients for glowing skin." }}</p>
+
+    <div class="quantity-selector">
+      <button id="decrease">-</button>
+      <input type="number" id="quantity" value="1" min="1">
+      <button id="increase">+</button>
+    </div>
+
+    
+      <!-- Add to Cart button inside product card -->
+<button class="add-to-cart" data-id="{{ product.id }}">
+    🛒 Add to Cart
+</button>
+
+<!-- Optional inline confirmation -->
+<div id="inlineConfirm" style="display:none;"></div>
+
+<script>
+// Add to Cart JS
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', () => {
+        const product_id = button.dataset.id;
+        const quantity = parseInt(document.getElementById("quantity").value) || 1;
+
+        if(!product_id) {
+            alert("Product ID missing!");
+            return;
+        }
+
+        fetch("/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ product_id: product_id, quantity: quantity })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const c = document.getElementById("inlineConfirm");
+            c.textContent = data.message || "Added to cart!";
+            c.style.display = "block";
+            setTimeout(()=> c.style.display = "none", 1800);
+            // optional: redirect to cart page
+            window.location.href = "/cart";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Something went wrong — try again.");
+        });
+    });
+});
+</script>
+
+
+      <button class="wishlist-btn" onclick="addToWishlist({{ product.id }})">❤️ Wishlist</button>
+    </div>
+  </div>
+</section>
+
+<!-- inline confirmation (optional) -->
+<div id="inlineConfirm">Added to cart — Redirecting...</div>
+
+{% include 'footer.html' %}
+
+<script>
+// image thumbnails
+document.querySelectorAll(".thumb").forEach(t => {
+  t.addEventListener("click", () => document.getElementById("mainImg").src = t.src);
+});
+
+// quantity buttons
+const quantityInput = document.getElementById("quantity");
+document.getElementById("decrease").onclick = () => { if(quantityInput.value > 1) quantityInput.value--; };
+document.getElementById("increase").onclick = () => { quantityInput.value++; };
+
+// add to cart: POST then redirect to /cart
+function addToCart(productId){
+  const qty = parseInt(quantityInput.value) || 1;
+
+  fetch("/cart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ product_id: productId, quantity: qty })
+  })
+  .then(async res => {
+    if (!res.ok) throw new Error('Network response not ok');
+    const data = await res.json().catch(()=>({}));
+    // optional: show small confirmation
+    const c = document.getElementById("inlineConfirm");
+    c.textContent = (data.message) ? data.message : "Added to cart — Redirecting...";
+    c.style.display = "block";
+    setTimeout(()=> c.style.display = "none", 1800);
+
+    // redirect to cart page
+    window.location.href = "/cart";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Kuch gadbad hui — try again.");
+  });
+}
+
+// wishlist
+function addToWishlist(productId){
+  fetch("/add_to_wishlist", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ product_id: productId })
+  })
+  .then(r=>r.json())
+  .then(d => alert(d.message || "Added to wishlist"))
+  .catch(e => console.error(e));
+}
+</script>
+</body>
+</html>

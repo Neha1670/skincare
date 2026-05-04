@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<div class="cart-container">
+    <h2 class="cart-header">Your Shopping Cart</h2>
+
+    {% if items %}
+    <div id="cartItems">
+
+        {% for item in items %}
+        <div class="cart-item" data-id="{{ item.id }}">
+
+            <!-- Product Image -->
+            <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="Product">
+
+            <!-- Product Info -->
+            <div class="cart-item-info">
+                <h4>{{ item.name }}</h4>
+                <p>₹<span class="price">{{ item.price }}</span></p>
+            </div>
+
+            <!-- Quantity -->
+            <div class="cart-qty">
+                <button class="decrease">-</button>
+                <input type="number" value="{{ item.qty }}" min="1">
+                <button class="increase">+</button>
+            </div>
+
+            <!-- Subtotal -->
+            <div class="cart-subtotal">₹<span>{{ item.subtotal }}</span></div>
+
+            <!-- Remove -->
+            <div class="cart-remove">Remove</div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- Cart Total -->
+    <div class="cart-total">
+        Total: ₹<span id="total">{{ total }}</span>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="payment-options">
+        <button class="pay-option active" data-method="card">Card / UPI</button>
+        <button class="pay-option" data-method="cod">Cash on Delivery</button>
+        <button class="pay-option" data-method="wallet">PhonePe / Paytm</button>
+    </div>
+
+    <!-- Checkout -->
+    <button id="checkoutBtn" class="btn-pay">Pay Now</button>
+
+    {% else %}
+    <!-- Empty Cart Message -->
+    <div class="empty-cart-container" style="text-align:center; margin-top:50px;">
+        <p class="empty-cart" style="font-size:20px; color:#f44336; font-weight:bold;">
+            Your shopping cart is empty!
+        </p>
+        <a href="{{ url_for('home') }}" 
+           class="continue-shopping" 
+           style="font-size:18px; color:#00c77f; text-decoration:underline;">
+           Continue Shopping
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ================= JS SECTION ================= -->
+<script>
+let selectedPayment = 'card';
+
+// Payment method selection
+document.querySelectorAll('.pay-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+        selectedPayment = btn.dataset.method;
+        document.querySelectorAll('.pay-option').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+// Increase / Decrease Quantity
+document.querySelectorAll('.cart-item').forEach(item => {
+    const pid = item.dataset.id;
+    const qtyInput = item.querySelector('input');
+    const subtotalEl = item.querySelector('.cart-subtotal span');
+    const price = parseInt(item.querySelector('.price').innerText);
+
+    // Increase
+    item.querySelector('.increase').addEventListener('click', () => {
+        qtyInput.value = parseInt(qtyInput.value) + 1;
+        updateCart(pid, qtyInput.value, price, subtotalEl);
+    });
+
+    // Decrease
+    item.querySelector('.decrease').addEventListener('click', () => {
+        if (qtyInput.value > 1) qtyInput.value--;
+        updateCart(pid, qtyInput.value, price, subtotalEl);
+    });
+
+    // Remove
+    item.querySelector('.cart-remove').addEventListener('click', () => {
+        removeFromCart(pid, item);
+    });
+});
+
+// Update Cart Function
+function updateCart(pid, qty, price, subtotalEl) {
+    subtotalEl.innerText = price * qty;
+
+    fetch('/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: pid, quantity: qty })
+    })
+    .then(r => r.json())
+    .then(() => updateTotal());
+}
+
+// Remove Item Function
+function removeFromCart(pid, itemEl) {
+    fetch('/remove-from-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: pid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            itemEl.remove();
+            updateTotal();
+        }
+    });
+}
+
+// Update Total Price
+function updateTotal() {
+    let total = 0;
+
+    document.querySelectorAll('.cart-subtotal span').forEach(s => {
+        total += parseInt(s.innerText);
+    });
+
+    document.getElementById('total').innerText = total;
+}
+
+// Stripe Checkout
+const stripe = Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+
+document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+
+    if (selectedPayment === 'card') {
+        fetch("/create-checkout-session", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            if (data.id) stripe.redirectToCheckout({ sessionId: data.id });
+        })
+        .catch(console.error);
+
+    } else if (selectedPayment === 'cod') {
+        alert("Cash on Delivery selected. Order will be confirmed on delivery.");
+        window.location.href = "/success";
+
+    } else if (selectedPayment === 'wallet') {
+        alert("PhonePe / Paytm payment selected.");
+        window.location.href = "/success";
+    }
+
+});
+</script>
+
+</body>
+</html>

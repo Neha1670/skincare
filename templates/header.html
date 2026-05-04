@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Pumpskin</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nehu.css') }}">
+
+  <!-- Ionicons -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+   <!-- Start WOWSlider.com HEAD section -->
+<link rel="stylesheet" type="text/css" href="engine1/style.css" />
+<script type="text/javascript" src="engine1/jquery.js"></script>
+<!-- End WOWSlider.com HEAD section -->
+</head>
+<body>
+  <!-- Marquee -->
+  
+
+<!-- 🔹 GLOBAL MARQUEE -->
+<div class="scrolling-text admin-marquee">
+  <div class="scroll-content">Loading offers...</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const marqueeDiv = document.querySelector(".scroll-content");
+
+  if (marqueeDiv) {
+    fetch("/get_marquee")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.text) return;
+
+        const finalText = data.text
+          .split(",")
+          .map(t => t.trim())
+          .join(" ✨ ");
+
+        marqueeDiv.innerHTML =
+          finalText + " &nbsp;&nbsp;&nbsp;&nbsp; " + finalText;
+      })
+      .catch(() => {
+        marqueeDiv.innerHTML = "✨ Welcome to Pumpkin Store ✨";
+      });
+  }
+
+});
+</script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector('.scroll-content').style.animationPlayState = 'running';
+  });
+  </script>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="flashMessage">
+        {% for category, message in messages %}
+          <p class="{{ category }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <script>
+  setTimeout(() => {
+    const flashBox = document.getElementById("flashMessage");
+    if (flashBox) {
+      flashBox.style.transition = "opacity 1s";
+      flashBox.style.opacity = "0";
+      setTimeout(() => flashBox.remove(), 1000);
+    }
+  }, 4000);
+  </script>
+
+  <!-- Top Info Bar -->
+  <div class="top-info">
+    <div class="left-info">
+      <span><ion-icon name="time-outline"></ion-icon> Mon-Fri: 10:00 - 18:00</span>
+      <span><ion-icon name="location-outline"></ion-icon> 106, 3rd Street, Chanakyapuri Colony, Satna MP</span>
+      <span><ion-icon name="mail-outline"></ion-icon> contact@thepumpskin.com</span>
+      <span><ion-icon name="call-outline"></ion-icon> +91 81200-63043</span>
+    </div>
+
+    <div class="right-info">
+      <a href="https://www.facebook.com/pumpkinbeautystore1" class="social"><ion-icon name="logo-facebook"></ion-icon></a>
+      <a href="https://www.linkedin.com/in/janhavi-manglani-20a91121a" class="social"><ion-icon name="logo-linkedin"></ion-icon></a>
+      <a href="https://www.instagram.com/pumpkin.palette/" class="social"><ion-icon name="logo-instagram"></ion-icon></a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-top">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Pumpkin Cosmetics Logo">
+        <h5>PUMPKIN ORGANIC AI SKINCARE STORE</h5>
+      </div>
+<div class="search-box">
+  <form action="{{ url_for('search') }}" method="get" style="display: flex; align-items: center;">
+    <select name="category">
+  <option value="home" {% if request.args.get('category') == 'home' %}selected{% endif %}>Home</option>
+  <option value="best_seller" {% if request.args.get('category') == 'best_seller' %}selected{% endif %}>Best Seller</option>
+  <option value="face" {% if request.args.get('category') == 'face' %}selected{% endif %}>Face</option>
+  <option value="hair" {% if request.args.get('category') == 'hair' %}selected{% endif %}>Hair</option>
+  <option value="body" {% if request.args.get('category') == 'body' %}selected{% endif %}>Body</option>
+</select>
+
+    <input type="text" name="query" placeholder="I'm looking for..."
+           value="{{ request.args.get('query', '') }}" style="flex: 1; padding: 8px; border-radius: 5px; margin-right: 5px;">
+
+    <button type="submit" style="padding: 8px 12px; border-radius: 5px; background-color: var(--btn-bg); color: white; border: none;">
+      <ion-icon name="search-outline"></ion-icon>
+    </button>
+  </form>
+</div>
+
+
+
+
+
+    
+
+      <div class="icons-wrapper">
+        <div class="icon-item" id="loginBtn">
+          <img src="{{ url_for('static', filename='images/user.png') }}" alt="User">
+          <span>User</span>
+        </div>
+
+        <div class="icon-item" id="adminBtn">
+          <img src="{{ url_for('static', filename='images/admin.png') }}" alt="Admin">
+          <span>Admin</span>
+        </div>
+
+        <div class="icon-item" id="openRating">
+          <img src="{{ url_for('static', filename='images/star.jpeg') }}" alt="Rate Us">
+          <span>Rate Us</span>
+        </div>
+
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+  <ul>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a class="bestseller-link" href="{{ url_for('search', category='best_seller') }}">Best Seller</a></li>
+    <li><a href="{{ url_for('search', category='face') }}">Face</a></li>
+    <li><a href="{{ url_for('search', category='hair') }}">Hair</a></li>
+    <li><a href="{{ url_for('search', category='body') }}">Body</a></li>
+
+    <li><a href="{{ url_for('live_analyzer') }}">AI Skin Analyzer</a></li>
+    
+     <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+     <li><a href="{{ url_for('aboutus') }}">About Us</a></li>
+  </ul>
+</nav>
+
+  <!-- Circle Products -->
+  <div class="circle-grid">
+    {% for product in home_products %}
+    <div class="circle-card">
+      <div class="img-wrap">
+        <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}">
+      </div>
+      <div class="card-body">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="price">{{ product.price }}</p>
+        <button class="buy-btn">Buy Now 🛍️</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Rating Popup -->
+  <div id="ratingPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+       background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); 
+       z-index:1000; width:300px; text-align:center;">
+    <h3 style="color:#ff6600;">Rate Us</h3>
+    <div id="starsContainer" style="display:flex; justify-content:center; gap:8px; margin-top:10px;">
+      {% for i in range(1,6) %}
+        <img src="{{ url_for('static', filename='images/star.jpeg') }}" class="star" data-value="{{ i }}" style="width:22px; height:22px; cursor:pointer;">
+      {% endfor %}
+    </div>
+    <p id="ratingMessage" style="margin-top:10px; color:#ff6600; font-size:14px;"></p>
+    <button id="closeRating" style="margin-top:15px; padding:6px 12px; border:none; background:#ff6600; color:#fff; border-radius:5px;">Close</button>
+  </div>
+
+  <script>
+  const ratingPopup = document.getElementById("ratingPopup");
+  const closeRating = document.getElementById("closeRating");
+  const stars = document.querySelectorAll("#starsContainer .star");
+  const ratingMessage = document.getElementById("ratingMessage");
+  const openRating = document.getElementById("openRating");
+
+  if (openRating) {
+    openRating.onclick = () => {
+      ratingPopup.style.display = "block";
+      ratingMessage.textContent = "";
+      stars.forEach(s => s.style.filter = "grayscale(100%)");
+    };
+  }
+
+  closeRating.onclick = () => ratingPopup.style.display = "none";
+
+  let selectedRating = 0;
+  stars.forEach(star => {
+    star.addEventListener("click", () => {
+      selectedRating = parseInt(star.dataset.value);
+      stars.forEach(s => s.style.filter = "grayscale(100%)");
+      for (let i = 0; i < selectedRating; i++) {
+        stars[i].style.filter = "none";
+      }
+      ratingMessage.textContent = `You rated ${selectedRating} star(s).`;
+
+      fetch("/submit_rating", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: "{{ session.get('username', '') }}",
+          rating: selectedRating
+        })
+      });
+    });
+  });
+  </script>
+
+</body>
+</html>

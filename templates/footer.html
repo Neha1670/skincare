@@ -1,0 +1,273 @@
+<!-- ------------------ Footer ------------------ -->
+<footer class="brown-footer">
+  <div class="footer-container">
+
+    <!-- Contact Us -->
+    <div class="footer-section">
+      <img src="{{ url_for('static', filename='images/Phone1.jpeg') }}" alt="Phone" width="38" style="margin-right:5px;">
+      <h3>Contact Us</h3>
+      <p>If you have any question, please contact us at <br>
+        <span>contact@thepumpskin.com</span>
+      </p>
+      <p><strong>Call us free:</strong> +91 81200-63043</p>
+
+      <!-- Floating Chatbot Button -->
+      <div id="chatButton" style="
+          margin-top:12px;
+          background:#FFB74D;
+          color:#000;
+          padding:12px 18px;
+          border-radius:30px;
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          box-shadow:0 6px 20px rgba(0,0,0,0.25);
+          font-weight:bold;
+          font-family:'Poppins', Arial, sans-serif;
+          transition:all 0.2s ease;
+          z-index:1000;
+      ">
+        <img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="Chat" style="width:36px; margin-right:12px;">
+        Pumpkin AI Assistant
+      </div>
+
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- Store Location -->
+    <div class="footer-section">
+      <img src="{{ url_for('static', filename='images/home.png') }}" alt="Home" width="38" style="margin-right:5px;">
+      <h3>Store Location</h3>
+      <p>
+        106, 3rd Street Chanakyapuri Colony,<br>
+        Near Pathak Hospital, Satna MP 485001
+      </p>
+    </div>
+
+    <!-- Open Hours -->
+    <div class="footer-section">
+      <img src="{{ url_for('static', filename='images/Time.jpeg') }}" alt="Time" width="38" style="margin-right:5px;">
+      <h3>Open Hours</h3>
+      <p>Monday - Saturday: 8:00 am - 4:00 pm</p>
+      <p>Sunday: Closed</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-section">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Shipping & Returns</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms Of Use</a></li>
+        <li><a href="#">Wishlist</a></li>
+        <li><a href="#">Compare</a></li>
+      </ul>
+    </div>
+
+    <!-- Newsletter / Subscribe -->
+    <div class="footer-section">
+      <h3>Subscribe</h3>
+      <p>Sign Up for Our Newsletter <br> Leave your email to get all hot deals & news!</p>
+      <form class="subscribe-form" action="{{ url_for('subscribe') }}" method="POST">
+        <input type="email" name="email" placeholder="Your email address..." required>
+        <button type="submit">Subscribe</button>
+      </form>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'subscribe' %}
+              <div class="{{ category }}" style="margin-top:10px; font-weight:bold;">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom" style="text-align:center; padding:10px 0;">
+    <p>Copyright © 2025 The Pumpskin. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<!-- ------------------ Chat Popup (fixed, outside footer) ------------------ -->
+<div id="chatPopup" style="
+    display:none;
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:420px;
+    max-width:95%;
+    max-height:400px;
+    background:#FFF3E0;
+    border-radius:20px;
+    box-shadow:0 12px 35px rgba(0,0,0,0.2);
+    overflow:hidden;
+    font-family:'Poppins', Arial, sans-serif;
+    z-index:1000;
+    transform:scale(0.95);
+    opacity:0;
+    transition: all 0.3s ease-in-out;
+">
+
+  <!-- Header -->
+  <div style="
+      background:#FFB74D;
+      color:#000;
+      padding:16px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:600;
+      font-size:16px;
+  ">
+    <span>🎃 Pumpkin AI Assistant</span>
+    <button id="closeChat" style="background:none; border:none; color:#000; font-weight:bold; cursor:pointer; font-size:20px;">✕</button>
+  </div>
+
+  <!-- Chat Messages -->
+  <div id="chatBox" style="
+      padding:16px;
+      height:300px;
+      overflow-y:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      color:#000;
+  "></div>
+
+  <!-- Input Area -->
+  <div style="
+      display:flex;
+      border-top:1px solid #FFB74D;
+      padding:12px 14px;
+      background:#FFF3E0;
+  ">
+    <input id="userInput" type="text" placeholder="Type your message..." style="
+          flex:1;
+          padding:12px;
+          border:2px solid #FFB74D;
+          border-radius:12px;
+          outline:none;
+          font-size:14px;
+          color:#000;
+          font-family:'Poppins', Arial, sans-serif;
+    ">
+    <button onclick="sendMessage()" style="
+          background:#FFB74D;
+          color:#000;
+          border:none;
+          padding:12px 18px;
+          margin-left:10px;
+          border-radius:12px;
+          cursor:pointer;
+          font-weight:600;
+          font-size:14px;
+          transition:all 0.2s ease;
+      ">Send</button>
+  </div>
+</div>
+
+<!-- ------------------ JavaScript ------------------ -->
+<script>
+const chatButton = document.getElementById("chatButton");
+const chatPopup = document.getElementById("chatPopup");
+const closeChat = document.getElementById("closeChat");
+const chatBox = document.getElementById("chatBox");
+const userInput = document.getElementById("userInput");
+
+// Pre-defined product responses
+const faq = {
+  "acne": "For acne-prone skin, we recommend our Pumpkin Acne Control Serum. It helps reduce pimples and soothes inflammation.",
+  "moisturizer": "Our Hydrating Pumpkin Moisturizer keeps your skin soft and nourished. Suitable for all skin types.",
+  "sensitive": "For sensitive skin, try our Gentle Pumpkin Face Wash, enriched with natural ingredients to calm irritation.",
+  "cleanser": "Our Pumpkin Cleanser effectively removes dirt and impurities while keeping your skin hydrated.",
+  "best product": "You can explore our full range on the website. For acne, we recommend Pumpkin Acne Control Serum; for hydration, Pumpkin Moisturizer."
+};
+
+// Open Chat Popup
+chatButton.addEventListener("click", () => {
+    chatPopup.style.display = "block";
+    setTimeout(() => {
+        chatPopup.style.transform = "scale(1)";
+        chatPopup.style.opacity = "1";
+    }, 50);
+    userInput.focus();
+});
+
+// Close Chat Popup
+closeChat.addEventListener("click", () => {
+    chatPopup.style.transform = "scale(0.95)";
+    chatPopup.style.opacity = "0";
+    setTimeout(() => { chatPopup.style.display = "none"; }, 300);
+});
+
+// Send Message
+function sendMessage() {
+    const msg = userInput.value.trim();
+    if(!msg) return;
+
+    const userBubble = document.createElement("div");
+    userBubble.textContent = msg;
+    userBubble.style.cssText = `
+        background:#FFD54F;
+        padding:12px;
+        border-radius:18px 18px 0 18px;
+        align-self:flex-end;
+        max-width:80%;
+        word-wrap:break-word;
+        color:#000;
+        font-size:14px;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    `;
+    chatBox.appendChild(userBubble);
+
+    setTimeout(() => {
+        let reply = "Hello! How can I help you today?";
+        const lowerMsg = msg.toLowerCase();
+        for (const key in faq) {
+            if (lowerMsg.includes(key)) { reply = faq[key]; break; }
+        }
+
+        const botBubble = document.createElement("div");
+        botBubble.textContent = reply;
+        botBubble.style.cssText = `
+            background:#FFF8E1;
+            padding:12px;
+            border-radius:18px 18px 18px 0;
+            border-left:4px solid #FFB74D;
+            align-self:flex-start;
+            max-width:80%;
+            word-wrap:break-word;
+            color:#000;
+            font-size:14px;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        `;
+        chatBox.appendChild(botBubble);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 400);
+
+    userInput.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+
+// Send with Enter key
+userInput.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){ sendMessage(); }
+});
+</script>
+
+<!-- Optional CSS -->
+<style>
+footer.brown-footer {
+    padding-bottom: 20px;
+}
+</style>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>AI Skin Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+  <style>
+    body {
+      background: #f7f9fc;
+      font-family: Poppins, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+    }
+    video, img {
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen px-4">
+
+  <div class="glass p-7 w-full max-w-xl text-center">
+
+    <h2 class="text-2xl font-bold mb-3 text-gray-800">AI Skin Analyzer</h2>
+    <p class="text-gray-600 text-sm mb-4">Upload a photo or use your webcam</p>
+
+    <!-- ✅ Preview of captured/uploaded image -->
+    <img id="preview" class="hidden w-48 mx-auto mb-4 shadow-lg rounded" alt="Preview">
+
+    <!-- ✅ Live Camera Stream -->
+    <video id="camera" autoplay class="hidden w-64 mx-auto shadow-lg"></video>
+
+    <!-- ✅ Hidden input to store captured image -->
+    <input type="hidden" id="capturedImage" name="captured">
+
+    <!-- ✅ Upload or Camera form -->
+    <form id="uploadForm" action="/analyze" method="POST" enctype="multipart/form-data">
+
+      <input id="fileInput" type="file" name="image"
+        class="bg-white w-full border p-2 rounded-lg mb-3 shadow">
+
+      <input type="hidden" id="captured" name="captured">
+
+      <button type="submit"
+        class="bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg w-full font-semibold shadow">
+        ✨ Analyze Skin
+      </button>
+    </form>
+
+    <p class="mt-4 text-sm text-gray-500">OR</p>
+
+    <!-- ✅ Start camera -->
+    <button onclick="startCamera()"
+      class="mt-3 py-2 w-full border border-gray-400 rounded-lg shadow">
+      📸 Use Camera
+    </button>
+
+    <!-- ✅ Capture button -->
+    <button id="captureBtn" onclick="capturePhoto()"
+      class="mt-3 py-2 w-full bg-green-600 text-white rounded-lg shadow hidden">
+      ✅ Capture Photo
+    </button>
+
+  </div>
+
+  <script>
+    function startCamera() {
+      let v = document.getElementById("camera");
+      v.style.display = "block";
+      document.getElementById("captureBtn").style.display = "block";
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => v.srcObject = stream)
+        .catch(() => alert("Camera permission denied or blocked."));
+    }
+
+    function capturePhoto() {
+      let video = document.getElementById("camera");
+      let canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth / 2;
+      canvas.height = video.videoHeight / 2;
+
+      canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+      let data = canvas.toDataURL("image/jpeg", 0.8);
+
+      // ✅ Store image data in hidden input
+      document.getElementById("captured").value = data;
+
+      // ✅ Preview image
+      let img = document.getElementById("preview");
+      img.src = data;
+      img.classList.remove("hidden");
+
+      // ✅ Hide video after capture
+      video.style.display = "none";
+      document.getElementById("captureBtn").style.display = "none";
+
+      // ✅ Stop webcam stream
+      let s = video.srcObject;
+      if (s) s.getTracks().forEach(t => t.stop());
+    }
+  </script>
+
+</body>
+</html>

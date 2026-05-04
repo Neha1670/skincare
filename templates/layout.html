@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Pumpkin SkinCare{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Pumpkin SkinCare</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('face_page') }}">Face</a>
+            <a href="{{ url_for('bestseller_page') }}">Best Sellers</a>
+        </nav>
+    </header>
+
+    <!-- Marquee -->
+    <marquee>{% block marquee %}🎃 Welcome to Pumpkin SkinCare!{% endblock %}</marquee>
+
+    <!-- Main content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Pumpkin SkinCare</p>
+    </footer>
+</body>
+</html>

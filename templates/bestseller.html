@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Best Sellers{% endblock %}
+
+{% block content %}
+
+<!-- 🌟 Best Sellers Section -->
+<section class="best-sellers-section">
+  <div class="center-text">
+    <h2>🌟 Best Sellers</h2>
+    <p>Most loved products by our users</p>
+  </div>
+
+  <!-- ✅ Circle Grid -->
+  <div class="circle-grid">
+    {% for product in best_sellers %}
+    <div class="circle-card">
+      <!-- Product Image -->
+      <div class="img-wrap">
+        <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}">
+      </div>
+
+      <!-- Product Info -->
+      <div class="card-body">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="price">₹{{ product.price }}</p>
+        <button class="buy-btn">Buy Now 🛍️</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

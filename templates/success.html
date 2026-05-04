@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Success</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nehu.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #fffaf5; color: #333; }
+        h2 { color: #ff6600; margin-bottom: 20px; }
+        table { width: 80%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+        th { background: #ffe6cc; }
+        a { display: inline-block; margin-top: 20px; padding: 10px 15px; background: #00c77f; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<h2>🎉 Payment Successful!</h2>
+<p>Your order has been placed successfully. Admin can now view the order in the dashboard.</p>
+
+{% if items %}
+<h3>Order Details:</h3>
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+    </tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.qty }}</td>
+        <td>₹{{ item.price }}</td>
+        <td>₹{{ item.subtotal }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <th colspan="3">Total</th>
+        <th>₹{{ total }}</th>
+    </tr>
+</table>
+{% endif %}
+
+<a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>

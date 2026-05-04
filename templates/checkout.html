@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - PumpkinSense</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+
+</head>
+<body>
+
+<div class="checkout-container">
+
+    <h2>Checkout</h2>
+
+    <h3>Your Order Summary</h3>
+    {% if cart %}
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price</th>
+        </tr>
+
+        {% for item in cart %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹ {{ item.price * item.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3 style="text-align:right; margin-top:10px;">
+        <strong>Total Amount: ₹ {{ total }}</strong>
+    </h3>
+
+    {% else %}
+    <p>No items found in your cart.</p>
+    {% endif %}
+
+    <form action="/place_order" method="POST" class="form-section">
+
+        <label>Full Name</label>
+        <input type="text" name="name" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email" required>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone" required>
+
+        <label>Delivery Address</label>
+        <textarea name="address" rows="4" required></textarea>
+
+        <button class="btn-place" type="submit">Place Order</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

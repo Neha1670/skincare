@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pumpkin AI Skincare Dashboard</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:#0a1022;
+color:#e5e7eb;
+}
+
+.sidebar{
+position:fixed;
+left:0;top:0;
+width:180px;
+height:100%;
+background:#0f172a;
+padding:15px;
+box-sizing:border-box;
+}
+
+.sidebar img{width:85px;margin-bottom:10px;}
+.sidebar h2{color:#38bdf8;font-size:18px;margin-bottom:15px;}
+.sidebar a{display:block;color:#cbd5e1;text-decoration:none;padding:10px;margin:6px 0;border-radius:6px;font-size:14px;}
+.sidebar a:hover{background:#1e293b}
+
+.topnav{
+margin-left:180px;
+padding:15px;
+background:#0f172a;
+border-bottom:1px solid #1e293b;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.topnav h3{
+color:#38bdf8;
+margin:0;
+}
+
+.logout-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+font-size:13px;
+}
+.logout-btn:hover{
+background:#dc2626;
+}
+
+.main{
+margin-left:180px;
+padding:25px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:20px;
+margin-bottom:25px;
+}
+
+.card{
+background:#111c36;
+padding:18px;
+border-radius:12px;
+text-align:center;
+border:1px solid #1e293b;
+}
+
+.card:hover{transform:translateY(-5px)}
+.card h2{font-size:14px;color:#94a3b8}
+.card h1{font-size:26px;color:#38bdf8}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:20px;
+}
+
+.section{
+background:#111c36;
+padding:15px;
+border-radius:12px;
+border:1px solid #1e293b;
+}
+
+.section h3{color:#7dd3fc;margin-bottom:10px;}
+
+canvas{
+max-height:280px;
+padding:10px;
+background: radial-gradient(circle, #0f172a, #020617);
+border-radius:12px;
+}
+
+.map{
+height:280px;
+border-radius:10px;
+}
+
+.growth-box{
+display:flex;
+justify-content:center;
+gap:10px;
+font-size:22px;
+font-weight:bold;
+color:#22c55e;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<img src="{{ url_for('static', filename='images/logo.jpg') }}">
+<h2>Pumpkin</h2>
+<a href="/dashboard">Dashboard</a>
+<a href="/clients">Clients</a>
+</div>
+
+<div class="topnav">
+<h3>AI SKINCARE INSIGHTS DASHBOARD</h3>
+<button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+</div>
+
+<div class="main">
+
+<div class="cards">
+<div class="card"><h2>Total Clients</h2><h1>{{ total_clients or 0 }}</h1></div>
+<div class="card"><h2>Cities</h2><h1>{{ total_cities or 0 }}</h1></div>
+<div class="card"><h2>Jan</h2><h1>{{ jan_total or 0 }}</h1></div>
+<div class="card"><h2>Feb</h2><h1>{{ feb_total or 0 }}</h1></div>
+<div class="card"><h2>Revenue</h2><h1>₹{{ yearly_revenue or 0 }}</h1></div>
+<div class="card"><h2>Profit</h2><h1>₹{{ final_profit or 0 }}</h1></div>
+</div>
+
+<div class="grid">
+<div class="section"><h3>City Bar</h3><canvas id="cityBar"></canvas></div>
+<div class="section"><h3>City Donut</h3><canvas id="cityDonut"></canvas></div>
+</div>
+
+<div class="grid">
+<div class="section"><h3>January</h3><canvas id="janChart"></canvas></div>
+<div class="section"><h3>January Map</h3><div id="janMap" class="map"></div></div>
+</div>
+
+<div class="grid">
+<div class="section"><h3>February</h3><canvas id="febChart"></canvas></div>
+<div class="section"><h3>February Map</h3><div id="febMap" class="map"></div></div>
+</div>
+
+<div class="grid">
+<div class="section"><h3>Revenue</h3><canvas id="revenueChart"></canvas></div>
+<div class="section"><h3>Profit</h3><canvas id="profitChart"></canvas></div>
+</div>
+<div class="grid">
+  <div class="section">
+    <h3>Client Growth Trend</h3>
+    <canvas id="clientTrendChart"></canvas>
+  </div>
+</div>
+
+<div class="grid">
+<div class="section"><h3>Expense</h3><canvas id="expenseChart"></canvas></div>
+<div class="section"><h3>Top Customers</h3><canvas id="personChart"></canvas></div>
+</div>
+
+<div class="card" style="margin-top:15px;">
+<h2>Growth %</h2>
+<div class="growth-box">
+<span>{{ "↑" if growth > 0 else "↓" }}</span>
+<span>{{ growth or 0 }}%</span>
+</div>
+</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+const L = window.L;
+
+const safe = (v)=>v||[];
+const safeNum = (v)=>v||0;
+
+const locations = safe({{ locations|default([])|tojson }});
+const jan = safe({{ jan_locations|default([])|tojson }});
+const feb = safe({{ feb_locations|default([])|tojson }});
+const revenue = safe({{ yearly_data|default([])|tojson }});
+const profit = safe({{ monthly_profit|default([])|tojson }});
+const expense = safe({{ monthly_expenses|default([])|tojson }});
+const persons = safe({{ person_names|default([])|tojson }});
+const counts = safe({{ person_counts|default([])|tojson }});
+
+const blue="#38bdf8", green="#22c55e", orange="#f97316", red="#ef4444";
+
+const LBL = a => a.map(x => x?.city || "");
+const VAL = a => a.map(x => safeNum(x?.count));
+
+const opt={
+responsive:true,
+plugins:{legend:{labels:{color:"white"}}},
+scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"},beginAtZero:true}}
+};
+
+/* BAR */
+new Chart(cityBar,{
+type:"bar",
+data:{labels:LBL(locations),datasets:[{data:VAL(locations),backgroundColor:blue}]},
+options:opt
+});
+
+/* ✅ DONUT WITHOUT CENTER TEXT */
+new Chart(cityDonut,{
+type:"doughnut",
+data:{
+labels:LBL(locations),
+datasets:[{
+data:VAL(locations),
+backgroundColor:[
+"#5eead4","#ef4444","#f97316","#facc15",
+"#a3a3a3","#38bdf8","#22c55e","#a855f7"
+],
+borderWidth:0,
+hoverOffset:10
+}]
+},
+options:{
+cutout:"72%",
+plugins:{
+legend:{position:"right",labels:{color:"#e5e7eb"}},
+tooltip:{
+backgroundColor:"#0f172a",
+titleColor:"#fff",
+bodyColor:"#cbd5e1"
+}
+}
+}
+});
+/* 👇 YAHI ADD KARNA HAI */
+new Chart(document.getElementById("clientTrendChart"), {
+  type: "line",
+  data: {
+    labels: ["Jan", "Feb"],
+    datasets: [{
+      label: "Clients",
+      data: [{{ jan_total or 0 }}, {{ feb_total or 0 }}],
+      borderColor: "#22c55e",
+      backgroundColor: "rgba(34,197,94,0.2)",
+      tension: 0.4,
+      fill: true
+    }]
+  },
+  options: opt
+});
+/* OTHER CHARTS */
+new Chart(janChart,{type:"bar",data:{labels:LBL(jan),datasets:[{data:VAL(jan),backgroundColor:green}]},options:opt});
+new Chart(febChart,{type:"bar",data:{labels:LBL(feb),datasets:[{data:VAL(feb),backgroundColor:orange}]},options:opt});
+
+function map(id,data,color){
+let m=L.map(id).setView([22.9,78.6],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+data.forEach(x=>{
+if(x?.lat && x?.lng){
+L.circle([x.lat,x.lng],{
+radius:(x.count||1)*2000,
+color:color,
+fillColor:color,
+fillOpacity:0.5
+}).addTo(m);
+}
+});
+}
+map("janMap",jan,green);
+map("febMap",feb,orange);
+
+new Chart(revenueChart,{type:"line",data:{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],datasets:[{data:revenue,borderColor:blue,fill:true}]},options:opt});
+new Chart(profitChart,{type:"line",data:{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],datasets:[{data:profit,borderColor:green,fill:true}]},options:opt});
+new Chart(expenseChart,{type:"line",data:{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],datasets:[{data:expense,borderColor:red,fill:true}]},options:opt});
+
+new Chart(personChart,{type:"bar",data:{labels:persons,datasets:[{data:counts,backgroundColor:blue}]},options:opt});
+
+});
+
+</script>
+
+</body>
+</html>
