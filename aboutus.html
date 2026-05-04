@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+/* Fade-in Animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 1.2s ease-in-out forwards;
+}
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<div style="max-width:1200px; margin:auto; padding:50px; font-family:'Urbanist', sans-serif; line-height:1.8;">
+
+  <!-- HERO -->
+  <div class="fade-in" style="text-align:center; margin-bottom:60px;">
+    <h1 style="color:#4B2E83; font-size:2.8rem;">For the Real You</h1>
+    <p style="font-size:1.25rem; max-width:800px; margin:auto; color:#444;">
+      Pumpkin Cosmetics brings safe, natural, result-oriented beauty and haircare for real people with real concerns.
+    </p>
+  </div>
+
+
+  <!-- FOUNDER SECTION -->
+  <div class="fade-in" style="
+      max-width:1200px; 
+      margin:80px auto; 
+      display:flex; 
+      flex-wrap:wrap; 
+      align-items:center; 
+      gap:60px;
+  ">
+
+      <!-- LEFT IMAGE -->
+      <div style="flex:1 1 450px; text-align:center;">
+          <img src="{{ url_for('static', filename='images/mam.jpeg') }}"
+              alt="Founder Image"
+              style="
+                width:100%; 
+                max-width:600px; 
+                border-radius:30px; 
+                box-shadow:0 20px 40px rgba(0,0,0,0.25);
+              ">
+          <p style="margin-top:12px; font-size:1.1rem; color:#444;">
+              <strong>Janhavi Manglani</strong><br>
+              Founder, Pumpkin Cosmetics
+          </p>
+      </div>
+
+      <!-- RIGHT STORY -->
+      <div style="flex:1 1 500px;">
+
+          <h2 style="
+              font-size:2.2rem; 
+              color:#8a9d39; 
+              font-weight:600; 
+              margin-bottom:10px;
+          ">
+              Founder’s Note
+          </h2>
+
+          <p style="
+              font-size:1.4rem; 
+              color:#8a9d39; 
+              font-weight:600;
+              margin-bottom:15px;
+          ">
+              “My struggle with hair fall became the beginning of something bigger.”
+          </p>
+
+          <p style="font-size:1.1rem; color:#444; line-height:1.7;">
+              There was a time when my hair fall became uncontrollable.  
+              I tried every product available — oils, tonics, serums, and treatments —  
+              but nothing worked.
+              <br><br>
+              Instead of giving up, I started studying natural ingredients and making 
+              small batches at home. After months of trial and error, I created a 
+              completely natural formula that finally worked — my hair grew back stronger,
+              healthier, and fuller.
+              <br><br>
+              This personal transformation gave birth to <strong>Pumpkin Cosmetics</strong>.  
+              A brand created not out of business, but out of a real struggle, real results,  
+              and a desire to help others experiencing the same issues.
+          </p>
+
+      </div>
+  </div>
+
+
+  <!-- BRAND JOURNEY -->
+  <div class="fade-in" style="margin:100px 0;">
+      <h2 style="color:#4B2E83; text-align:center; font-size:2.2rem; margin-bottom:35px;">
+          The Journey From Hair Loss to Hair Care Innovation
+      </h2>
+
+      <div style="display:flex; flex-wrap:wrap; gap:40px; justify-content:center; align-items:center;">
+          
+          <div style="flex:1 1 450px; font-size:1.1rem; color:#444;">
+              <p>
+                  Pumpkin Cosmetics was born from a deeply personal journey.  
+                  What started as one woman’s attempt to fix her own hair fall
+                  soon became a mission to bring natural, powerful, non-toxic haircare
+                  to everyone struggling with the same issue.
+              </p>
+              <p>
+                  Every Pumpkin product is carefully researched, hand-formulated,
+                  and tested — not on trends, but on real results.  
+                  The goal is simple: to give you clean beauty solutions that work
+                  naturally, gently, and effectively.
+              </p>
+          </div>
+
+          <div style="flex:1 1 340px; text-align:center;">
+              <img src="{{ url_for('static', filename='images/Result.jpg') }}" 
+                  alt="Pumpkin Product"
+                  style="
+                      width:100%; 
+                      border-radius:18px; 
+                      box-shadow:0 10px 25px rgba(0,0,0,0.25);
+                  ">
+          </div>
+
+      </div>
+  </div>
+
+
+  <!-- OUR CORE BELIEF -->
+  <div class="fade-in" style="margin-bottom:80px; background:#faf7ff; padding:40px; border-radius:15px; text-align:center;">
+      <h2 style="color:#4B2E83; font-size:2rem;">Our Core Belief</h2>
+
+      <p style="max-width:900px; margin:auto; font-size:1.1rem; color:#555; margin-top:20px;">
+          Beauty should heal, not harm.  
+          That’s why Pumpkin focuses on natural, cruelty-free, chemical-free, and gentle formulations  
+          that restore confidence and bring real results.
+      </p>
+  </div>
+
+
+  <!-- TEAM SECTION -->
+  <div class="fade-in" style="margin:100px 0;">
+      <h2 style="
+          color:#4B2E83; 
+          text-align:center; 
+          font-size:2.2rem; 
+          margin-bottom:40px;
+      ">
+          Meet Our Team
+      </h2>
+
+      <div style="
+          display:flex; 
+          flex-wrap:wrap; 
+          justify-content:center; 
+          gap:40px;
+      ">
+
+          <!-- Team 1 -->
+          <div style="
+              background:#ffffff; 
+              width:280px; 
+              padding:20px; 
+              border-radius:15px; 
+              text-align:center; 
+              box-shadow:0 10px 25px rgba(0,0,0,0.15);
+              transition:0.3s;
+          "
+          onmouseover="this.style.transform='translateY(-8px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+          >
+              <img src="{{ url_for('static', filename='images/neha.jpg') }}" 
+                   alt="Team Member"
+                   style="
+                      width:100%; 
+                      height:260px; 
+                      object-fit:cover; 
+                      border-radius:15px;
+                   ">
+              <h3 style="margin-top:15px; font-size:1.4rem; color:#4B2E83;">Neha Upadhyay</h3>
+              <p style="color:#666; font-size:1rem;">AI & Web Developer Intern</p>
+          </div>
+
+          <!-- Team 2 -->
+          <div style="
+              background:#ffffff; 
+              width:280px; 
+              padding:20px; 
+              border-radius:15px; 
+              text-align:center; 
+              box-shadow:0 10px 25px rgba(0,0,0,0.15);
+              transition:0.3s;
+          "
+          onmouseover="this.style.transform='translateY(-8px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+          >
+              <img src="{{ url_for('static', filename='images/shivani.jpg') }}" 
+                   alt="Team Member"
+                   style="
+                      width:100%; 
+                      height:260px; 
+                      object-fit:cover; 
+                      border-radius:15px;
+                   ">
+              <h3 style="margin-top:15px; font-size:1.4rem; color:#4B2E83;">Shivani Dahayat</h3>
+              <p style="color:#666; font-size:1rem;">Content & Social Media Intern</p>
+          </div>
+
+          <!-- Team 3 -->
+          <div style="
+              background:#ffffff; 
+              width:280px; 
+              padding:20px; 
+              border-radius:15px; 
+              text-align:center; 
+              box-shadow:0 10px 25px rgba(0,0,0,0.15);
+              transition:0.3s;
+          "
+          onmouseover="this.style.transform='translateY(-8px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+          >
+              <img src="{{ url_for('static', filename='images/sahil.jpg') }}" 
+                   alt="Team Member"
+                   style="
+                      width:100%; 
+                      height:260px; 
+                      object-fit:cover; 
+                      border-radius:15px;
+                   ">
+              <h3 style="margin-top:15px; font-size:1.4rem; color:#4B2E83;">Sahil Kumar</h3>
+              <p style="color:#666; font-size:1rem;">Backend Developer</p>
+          </div>
+
+      </div>
+  </div>
+
+
+  <!-- VISIT US -->
+  <div class="fade-in" style="text-align:center; margin-bottom:40px;">
+      <h2 style="color:#4B2E83; font-size:2rem;">Our Presence</h2>
+      <p style="font-size:1.2rem; color:#444; margin-top:10px;">
+          Satna • Rewa • Jabalpur • Bhopal • Indore
+      </p>
+  </div>
+
+</div>
+
+{% endblock %}  
